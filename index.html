@@ -1,341 +1,567 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SMP Calculator — Production (2025-26 rates)</title>
-  <style>
-    /* Responsive, clean UI (keeps your original look but adds new inputs) */
-    :root{--accent1:#667eea;--accent2:#764ba2;--card:#ffffff;--muted:#666}
-    *{box-sizing:border-box}
-    body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef2ff 0%, #f7f3ff 100%);margin:0;padding:20px}
-    .container{max-width:980px;margin:0 auto;background:var(--card);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.12);overflow:hidden}
-    .header{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;padding:28px;text-align:center}
-    .header h1{margin:0;font-size:22px}
-    .content{padding:26px}
-    .section{margin-bottom:20px}
-    label{display:block;font-weight:600;margin-bottom:8px}
-    input[type="number"], input[type="date"], select{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-size:15px}
-    .grid{display:grid;gap:10px}
-    .grid.cols-4{grid-template-columns:repeat(4,1fr)}
-    .grid.cols-2{grid-template-columns:repeat(2,1fr)}
-    .small{font-size:13px;color:var(--muted)}
-    .btn{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;padding:14px;border:none;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;width:100%}
-    .results{display:none;margin-top:18px}
-    .card{border-radius:10px;padding:18px;border:1px solid #e6e6e6;background:#fff;margin-bottom:12px}
-    .pass{border-left:4px solid #4caf50}
-    .fail{border-left:4px solid #f44336}
-    .pay-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:linear-gradient(135deg,#f0f4ff,#f8f7ff);margin-bottom:8px}
-    .total{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;padding:14px;border-radius:8px;text-align:center;font-weight:700}
-    .footer{background:#f5f5f5;padding:14px;text-align:center;font-size:13px;color:#444}
-    @media(max-width:720px){.grid.cols-4{grid-template-columns:repeat(2,1fr)}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .smp-calculator-wrapper {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .smp-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .smp-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .smp-header-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .smp-header-subtitle {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .smp-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .smp-content {
+            padding: 30px;
+        }
+
+        .smp-info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .smp-info-title {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .smp-info-box ul {
+            margin-left: 20px;
+        }
+
+        .smp-info-box li {
+            margin: 5px 0;
+        }
+
+        .smp-help-box {
+            background: #fff4e6;
+            border-left: 4px solid #ff9800;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .smp-help-title {
+            color: #ff9800;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .smp-form-section {
+            background: #fafafa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .smp-section-title {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .smp-form-group {
+            margin-bottom: 20px;
+        }
+
+        .smp-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .smp-input, .smp-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .smp-input:focus, .smp-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .smp-earnings-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .smp-earnings-grid input {
+            text-align: center;
+        }
+
+        .smp-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .smp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .smp-btn:active {
+            transform: translateY(0);
+        }
+
+        .smp-results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .smp-result-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .smp-result-card.eligible {
+            border-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .smp-result-card.not-eligible {
+            border-color: #f44336;
+            background: #fef5f5;
+        }
+
+        .smp-result-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .smp-status-icon {
+            font-size: 40px;
+            line-height: 1;
+        }
+
+        .smp-result-title {
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .smp-check-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .smp-check-item.pass {
+            border-left: 4px solid #4caf50;
+        }
+
+        .smp-check-item.fail {
+            border-left: 4px solid #f44336;
+        }
+
+        .smp-check-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .smp-check-value {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .smp-check-status {
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .smp-check-status.pass {
+            background: #4caf50;
+            color: white;
+        }
+
+        .smp-check-status.fail {
+            background: #f44336;
+            color: white;
+        }
+
+        .smp-payment-breakdown {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .smp-payment-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .smp-payment-row {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .smp-payment-label {
+            font-weight: 500;
+        }
+
+        .smp-payment-amount {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .smp-total-row {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .smp-warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .smp-footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .smp-footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .smp-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .smp-container {
+                border-radius: 0;
+            }
+
+            .smp-content {
+                padding: 20px;
+            }
+
+            .smp-header-title {
+                font-size: 24px;
+            }
+
+            .smp-earnings-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container" role="main">
-    <div class="header">
-      <h1>🤰 UK Statutory Maternity Pay (SMP) Calculator — 2025–26</h1>
-      <div class="small">Configured using GOV.UK published 2025–26 rates (standard rate £187.18; qualifying weekly minimum £125.00). :contentReference[oaicite:1]{index=1}</div>
+    <div class="smp-calculator-wrapper">
+        <div class="smp-container">
+            <div class="smp-header">
+                <div class="smp-header-title">🤰 UK Statutory Maternity Pay Calculator</div>
+                <div class="smp-header-subtitle">HMRC Rules 2025-26 Tax Year</div>
+                <span class="smp-badge">April 2025 - April 2026</span>
+            </div>
+
+            <div class="smp-content">
+                <div class="smp-info-box">
+                    <div class="smp-info-title">📋 Current SMP Rates (2025-26)</div>
+                    <ul>
+                        <li><strong>Weeks 1-6:</strong> 90% of average weekly earnings</li>
+                        <li><strong>Weeks 7-39:</strong> £187.18 per week OR 90% of average earnings (whichever is lower)</li>
+                        <li><strong>Minimum earnings:</strong> £125 per week average</li>
+                        <li><strong>Employment required:</strong> 26 weeks continuous by qualifying week</li>
+                    </ul>
+                </div>
+
+                <div class="smp-form-section">
+                    <div class="smp-section-title">Employee Information</div>
+                    
+                    <div class="smp-form-group">
+                        <label class="smp-label" for="dueDate">Expected Due Date</label>
+                        <input type="date" id="dueDate" class="smp-input" required>
+                    </div>
+
+                    <div class="smp-form-group">
+                        <label class="smp-label" for="employmentStart">Employment Start Date</label>
+                        <input type="date" id="employmentStart" class="smp-input" required>
+                    </div>
+
+                    <div class="smp-form-group">
+                        <label class="smp-label" for="payFrequency">Pay Frequency</label>
+                        <select id="payFrequency" class="smp-select" required>
+                            <option value="">Select pay frequency...</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="smp-form-section">
+                    <div class="smp-section-title">Earnings Information</div>
+                    
+                    <div class="smp-help-box">
+                        <div class="smp-help-title">💡 How to Find Your Gross Earnings</div>
+                        <div style="margin-bottom: 10px;"><strong>Look at your payslips and enter GROSS PAY (before tax/NI):</strong></div>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li><strong>Weekly paid:</strong> Enter last 8 weeks of gross earnings</li>
+                            <li><strong>Monthly paid:</strong> Enter last 2 months of gross earnings</li>
+                            <li><strong>Include:</strong> Basic pay, overtime, bonuses, commission</li>
+                            <li><strong>Exclude:</strong> Expenses, benefits (company car, etc.)</li>
+                        </ul>
+                        <div style="color: #666; font-size: 14px;"><strong>Example:</strong> Payslip shows "Gross Pay: £450.00" → enter 450</div>
+                    </div>
+
+                    <div class="smp-form-group">
+                        <label class="smp-label">Weekly Paid: Last 8 Weeks Gross Earnings (£)</label>
+                        <div style="color: #666; font-size: 13px; margin-bottom: 10px;">Leave blank if you're monthly paid</div>
+                        <div class="smp-earnings-grid">
+                            <input type="number" step="0.01" min="0" placeholder="Week 1" class="smp-input w-earning" id="w1">
+                            <input type="number" step="0.01" min="0" placeholder="Week 2" class="smp-input w-earning" id="w2">
+                            <input type="number" step="0.01" min="0" placeholder="Week 3" class="smp-input w-earning" id="w3">
+                            <input type="number" step="0.01" min="0" placeholder="Week 4" class="smp-input w-earning" id="w4">
+                            <input type="number" step="0.01" min="0" placeholder="Week 5" class="smp-input w-earning" id="w5">
+                            <input type="number" step="0.01" min="0" placeholder="Week 6" class="smp-input w-earning" id="w6">
+                            <input type="number" step="0.01" min="0" placeholder="Week 7" class="smp-input w-earning" id="w7">
+                            <input type="number" step="0.01" min="0" placeholder="Week 8" class="smp-input w-earning" id="w8">
+                        </div>
+                    </div>
+
+                    <div class="smp-form-group">
+                        <label class="smp-label">Monthly Paid: Last 2 Months Gross Earnings (£)</label>
+                        <div style="color: #666; font-size: 13px; margin-bottom: 10px;">Leave blank if you're weekly paid</div>
+                        <div class="smp-earnings-grid" style="grid-template-columns: repeat(2, 1fr);">
+                            <input type="number" step="0.01" min="0" placeholder="Month 1" class="smp-input m-earning" id="m1">
+                            <input type="number" step="0.01" min="0" placeholder="Month 2" class="smp-input m-earning" id="m2">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="smp-btn" id="smpCalcButton">Calculate Maternity Pay</button>
+
+                <div class="smp-results" id="results"></div>
+            </div>
+
+            <div class="smp-footer">
+                <div><strong>Disclaimer:</strong> This calculator is for guidance only. Please verify with HMRC official resources.</div>
+                <div>Official calculator: <a href="https://www.gov.uk/maternity-paternity-calculator" target="_blank">GOV.UK Maternity Pay Calculator</a></div>
+                <div style="margin-top: 10px;">© 2025 | Based on HMRC Rules for 2025-26 Tax Year</div>
+            </div>
+        </div>
     </div>
 
-    <div class="content">
-      <div class="section card">
-        <strong>Input</strong>
-        <div style="margin-top:12px" class="grid cols-2">
-          <div>
-            <label for="dueDate">Expected Due Date</label>
-            <input id="dueDate" type="date" />
-          </div>
-          <div>
-            <label for="employmentStart">Employment Start Date</label>
-            <input id="employmentStart" type="date" />
-          </div>
-        </div>
+    <script type="text/javascript">
+(function() {
+    var btn = document.getElementById('smpCalcButton');
+    if (btn) {
+        btn.onclick = function() {
+            try {
+                var dueDate = document.getElementById('dueDate').value;
+                var empStart = document.getElementById('employmentStart').value;
+                var freq = document.getElementById('payFrequency').value;
+                
+                if (!dueDate || !empStart || !freq) {
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+                
+                var earnings = [];
+                if (freq === 'weekly') {
+                    for (var i = 1; i <= 8; i++) {
+                        var val = document.getElementById('w' + i).value;
+                        earnings.push(parseFloat(val) || 0);
+                    }
+                    if (earnings.every(function(v) { return v === 0; })) {
+                        alert('Please enter your weekly earnings');
+                        return false;
+                    }
+                } else {
+                    for (var i = 1; i <= 2; i++) {
+                        var val = document.getElementById('m' + i).value;
+                        earnings.push(parseFloat(val) || 0);
+                    }
+                    if (earnings.every(function(v) { return v === 0; })) {
+                        alert('Please enter your monthly earnings');
+                        return false;
+                    }
+                }
 
-        <div style="margin-top:12px">
-          <label for="payFrequency">Pay Frequency</label>
-          <select id="payFrequency">
-            <option value="">Select pay frequency…</option>
-            <option value="weekly">Weekly</option>
-            <option value="fortnightly">Fortnightly (every 2 weeks)</option>
-            <option value="4-weekly">4-weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-          <div class="small" style="margin-top:8px">Choose the pay frequency that matches how the employee is paid. The calculator will show the required pay-entry fields for that frequency.</div>
-        </div>
-      </div>
+                var d = new Date(dueDate);
+                var day = d.getDay();
+                var toSunday = day === 0 ? 0 : day;
+                var weekStart = new Date(d);
+                weekStart.setDate(d.getDate() - toSunday);
+                var qStart = new Date(weekStart);
+                qStart.setDate(weekStart.getDate() - 105);
+                var qEnd = new Date(qStart);
+                qEnd.setDate(qStart.getDate() + 6);
 
-      <!-- Earnings inputs (all present; JS will show/hide as needed) -->
-      <div class="section card">
-        <strong>Earnings — enter gross pay for each recent pay period</strong>
-        <div class="small" style="margin-top:8px">For weekly: enter 8 most recent weekly gross pays. For fortnightly: 4 most recent pays. For 4-weekly: 2 pays. For monthly: 2 most recent months. Leave fields blank that don't apply.</div>
+                var weeks = (qEnd - new Date(empStart)) / (1000 * 60 * 60 * 24 * 7);
+                var empPassed = weeks >= 26;
+                var weeksEmployed = Math.round(weeks * 10) / 10;
 
-        <div id="weeklyInputs" style="margin-top:14px;display:none">
-          <label>Weekly paid — last 8 weeks (gross £)</label>
-          <div class="grid cols-4" id="weeklyGrid">
-            <input id="w1" type="number" step="0.01" min="0" placeholder="Week 1" />
-            <input id="w2" type="number" step="0.01" min="0" placeholder="Week 2" />
-            <input id="w3" type="number" step="0.01" min="0" placeholder="Week 3" />
-            <input id="w4" type="number" step="0.01" min="0" placeholder="Week 4" />
-            <input id="w5" type="number" step="0.01" min="0" placeholder="Week 5" />
-            <input id="w6" type="number" step="0.01" min="0" placeholder="Week 6" />
-            <input id="w7" type="number" step="0.01" min="0" placeholder="Week 7" />
-            <input id="w8" type="number" step="0.01" min="0" placeholder="Week 8" />
-          </div>
-        </div>
+                var total = 0;
+                for (var i = 0; i < earnings.length; i++) {
+                    total += earnings[i];
+                }
+                
+                var avgEarn = freq === 'weekly' ? total / 8 : (total / 2) * (12 / 52);
+                var earnPassed = avgEarn >= 125;
+                var eligible = empPassed && earnPassed;
 
-        <div id="fortnightlyInputs" style="margin-top:14px;display:none">
-          <label>Fortnightly paid — last 4 pays (gross £)</label>
-          <div class="grid cols-2" id="fnGrid">
-            <input id="fn1" type="number" step="0.01" min="0" placeholder="Fortnight 1" />
-            <input id="fn2" type="number" step="0.01" min="0" placeholder="Fortnight 2" />
-            <input id="fn3" type="number" step="0.01" min="0" placeholder="Fortnight 3" />
-            <input id="fn4" type="number" step="0.01" min="0" placeholder="Fortnight 4" />
-          </div>
-        </div>
+                var smp = null;
+                if (eligible) {
+                    var rate6 = avgEarn * 0.90;
+                    var total6 = rate6 * 6;
+                    var rate33 = Math.min(187.18, avgEarn * 0.90);
+                    var total33 = rate33 * 33;
+                    smp = {
+                        avg: avgEarn.toFixed(2),
+                        first: { rate: rate6.toFixed(2), total: total6.toFixed(2) },
+                        remaining: { rate: rate33.toFixed(2), total: total33.toFixed(2) },
+                        total: (total6 + total33).toFixed(2)
+                    };
+                }
 
-        <div id="fourWeeklyInputs" style="margin-top:14px;display:none">
-          <label>4-weekly paid — last 2 pays (gross £)</label>
-          <div class="grid cols-2" id="fourGrid">
-            <input id="four1" type="number" step="0.01" min="0" placeholder="4-week pay 1" />
-            <input id="four2" type="number" step="0.01" min="0" placeholder="4-week pay 2" />
-          </div>
-        </div>
+                function formatDate(date) {
+                    var options = { day: 'numeric', month: 'long', year: 'numeric' };
+                    return date.toLocaleDateString('en-GB', options);
+                }
 
-        <div id="monthlyInputs" style="margin-top:14px;display:none">
-          <label>Monthly paid — last 2 months (gross £)</label>
-          <div class="grid cols-2" id="monthlyGrid">
-            <input id="m1" type="number" step="0.01" min="0" placeholder="Month 1" />
-            <input id="m2" type="number" step="0.01" min="0" placeholder="Month 2" />
-          </div>
-        </div>
-      </div>
+                var html = '<div class="smp-result-card ' + (eligible ? 'eligible' : 'not-eligible') + '">';
+                html += '<div class="smp-result-header"><div class="smp-status-icon">' + (eligible ? '✅' : '❌') + '</div>';
+                html += '<div><div class="smp-result-title">' + (eligible ? 'Eligible for SMP' : 'Not Eligible for SMP') + '</div>';
+                html += '<div style="color: #666;">Based on information provided</div></div></div>';
+                html += '<div style="margin-bottom: 20px;"><strong>Due Date:</strong> ' + formatDate(new Date(dueDate)) + '<br>';
+                html += '<strong>Qualifying Week:</strong> ' + formatDate(qStart) + ' to ' + formatDate(qEnd) + '</div>';
+                html += '<div style="margin: 20px 0 10px 0; font-weight: 600;">Eligibility Checks:</div>';
+                html += '<div class="smp-check-item ' + (empPassed ? 'pass' : 'fail') + '"><div>';
+                html += '<div class="smp-check-label">Continuous Employment (26 weeks required)</div>';
+                html += '<div class="smp-check-value">Employment start: ' + formatDate(new Date(empStart)) + ' | Weeks employed: ' + weeksEmployed + '</div></div>';
+                html += '<div class="smp-check-status ' + (empPassed ? 'pass' : 'fail') + '">' + (empPassed ? 'PASS' : 'FAIL') + '</div></div>';
+                html += '<div class="smp-check-item ' + (earnPassed ? 'pass' : 'fail') + '"><div>';
+                html += '<div class="smp-check-label">Average Weekly Earnings (£125/week minimum)</div>';
+                html += '<div class="smp-check-value">Average weekly earnings: £' + avgEarn.toFixed(2) + '</div></div>';
+                html += '<div class="smp-check-status ' + (earnPassed ? 'pass' : 'fail') + '">' + (earnPassed ? 'PASS' : 'FAIL') + '</div></div>';
 
-      <div class="section">
-        <button id="smpCalcButton" class="btn">Calculate Maternity Pay</button>
-      </div>
+                if (eligible && smp) {
+                    html += '<div class="smp-payment-breakdown"><div class="smp-payment-title">💷 SMP Payment Breakdown</div>';
+                    html += '<div style="text-align: center; margin-bottom: 20px;">Average Weekly Earnings: <strong>£' + smp.avg + '</strong></div>';
+                    html += '<div class="smp-payment-row"><div><div class="smp-payment-label">Weeks 1-6</div><div style="font-size: 13px; opacity: 0.9;">90% of average earnings</div></div>';
+                    html += '<div><div class="smp-payment-amount">£' + smp.first.rate + '/week</div><div style="font-size: 14px;">Total: £' + smp.first.total + '</div></div></div>';
+                    html += '<div class="smp-payment-row"><div><div class="smp-payment-label">Weeks 7-39</div><div style="font-size: 13px; opacity: 0.9;">Standard rate or 90% (lower)</div></div>';
+                    html += '<div><div class="smp-payment-amount">£' + smp.remaining.rate + '/week</div><div style="font-size: 14px;">Total: £' + smp.remaining.total + '</div></div></div>';
+                    html += '<div class="smp-total-row">Total SMP (39 weeks): £' + smp.total + '</div></div>';
+                    html += '<div class="smp-warning-box"><strong>⚠️ Important:</strong> SMP is subject to tax and National Insurance deductions.</div>';
+                } else {
+                    html += '<div class="smp-warning-box"><strong>ℹ️ Alternative:</strong> You may be eligible for <strong>Maternity Allowance</strong>. Visit <a href="https://www.gov.uk/maternity-allowance" target="_blank">GOV.UK Maternity Allowance</a></div>';
+                }
 
-      <div id="results" class="results" aria-live="polite"></div>
-
-      <div class="footer">
-        <div>Disclaimer: guidance only — always verify with GOV.UK/HMRC official pages. Rates used are the GOV.UK 2025–26 figures. :contentReference[oaicite:2]{index=2}</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCRIPT: accurate SMP logic (qualifying week, AWE, continuous employment) -->
-  <script>
-  (function () {
-    'use strict';
-
-    // --- CONFIG (update if HMRC changes) ---
-    var SMP_STANDARD_RATE = 187.18; // weeks 7-39 standard weekly rate (GOV.UK 2025-26)
-    var SMP_LEL = 125.00; // Lower Earnings Limit / minimum average weekly earnings for eligibility (2025-26)
-    var TOTAL_SMP_WEEKS = 39;
-    var FIRST_6_WEEKS = 6;
-    var REMAINING_WEEKS = TOTAL_SMP_WEEKS - FIRST_6_WEEKS;
-
-    // Utility: zero time (use UTC to avoid timezone shifts)
-    function startOfDayUTC(date) {
-      var d = new Date(date.getTime());
-      d.setUTCHours(0,0,0,0);
-      return d;
+                html += '</div>';
+                document.getElementById('results').innerHTML = html;
+                document.getElementById('results').style.display = 'block';
+                
+                setTimeout(function() {
+                    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+                
+                return false;
+            } catch(e) {
+                alert('Calculation error. Please check your inputs.');
+                return false;
+            }
+        };
     }
-
-    // Returns the Sunday on or before the given date (EWC start as HMRC defines)
-    function sundayOnOrBefore(date) {
-      var d = startOfDayUTC(new Date(date));
-      var dow = d.getUTCDay(); // 0 = Sunday
-      d.setUTCDate(d.getUTCDate() - dow);
-      return startOfDayUTC(d);
-    }
-
-    // Compute qualifying week start/end: 15 weeks BEFORE EWC_start
-    function qualifyingWeekForDueDate(dueDate) {
-      var ewcStart = sundayOnOrBefore(new Date(dueDate));
-      var qStart = new Date(ewcStart.getTime() - 15 * 7 * 24 * 60 * 60 * 1000); // 15 weeks earlier
-      var qEnd = new Date(qStart.getTime() + 6 * 24 * 60 * 60 * 1000);
-      return { qStart: startOfDayUTC(qStart), qEnd: startOfDayUTC(qEnd), ewcStart: ewcStart };
-    }
-
-    // Convert numeric arrays to average weekly earnings by frequency
-    function computeAWE(entries, freq) {
-      // entries should be numbers (non-empty). If some blank, call will only include present entries.
-      var sum = entries.reduce(function (s, v) { return s + v; }, 0);
-      var pays = entries.length;
-      if (pays === 0) return { avgWeekly: 0, usedPeriods: 0, weeksCovered: 0 };
-
-      if (freq === 'weekly') {
-        var weeksCovered = pays;
-        return { avgWeekly: sum / weeksCovered, usedPeriods: pays, weeksCovered: weeksCovered };
-      } else if (freq === 'fortnightly') {
-        var weeksCovered = pays * 2;
-        return { avgWeekly: sum / weeksCovered, usedPeriods: pays, weeksCovered: weeksCovered };
-      } else if (freq === '4-weekly') {
-        var weeksCovered = pays * 4;
-        return { avgWeekly: sum / weeksCovered, usedPeriods: pays, weeksCovered: weeksCovered };
-      } else if (freq === 'monthly') {
-        // HMRC: monthly -> average weekly = (monthly average * 12) / 52
-        var monthlyAvg = sum / pays;
-        var avgWeekly = (monthlyAvg * 12) / 52;
-        return { avgWeekly: avgWeekly, usedPeriods: pays, weeksCovered: (pays * (52/12)) };
-      } else {
-        var weeksCovered = pays;
-        return { avgWeekly: sum / weeksCovered, usedPeriods: pays, weeksCovered: weeksCovered };
-      }
-    }
-
-    // Required pay entries for accuracy (GOV.UK typical guidance: use last ~8 weeks or whole pay periods)
-    var REQUIRED_ENTRIES = {
-      'weekly': 8,
-      'fortnightly': 4,
-      '4-weekly': 2,
-      'monthly': 2
-    };
-
-    // UI helpers
-    var payFrequencyEl = document.getElementById('payFrequency');
-    var weeklyInputs = document.getElementById('weeklyInputs');
-    var fortnightlyInputs = document.getElementById('fortnightlyInputs');
-    var fourWeeklyInputs = document.getElementById('fourWeeklyInputs');
-    var monthlyInputs = document.getElementById('monthlyInputs');
-    var resultsEl = document.getElementById('results');
-
-    function hideAllEarnings() {
-      weeklyInputs.style.display = 'none';
-      fortnightlyInputs.style.display = 'none';
-      fourWeeklyInputs.style.display = 'none';
-      monthlyInputs.style.display = 'none';
-    }
-
-    payFrequencyEl && payFrequencyEl.addEventListener('change', function () {
-      hideAllEarnings();
-      var v = payFrequencyEl.value;
-      if (v === 'weekly') weeklyInputs.style.display = 'block';
-      else if (v === 'fortnightly') fortnightlyInputs.style.display = 'block';
-      else if (v === '4-weekly') fourWeeklyInputs.style.display = 'block';
-      else if (v === 'monthly') monthlyInputs.style.display = 'block';
-      // clear results when user changes frequency
-      resultsEl.style.display = 'none';
-      resultsEl.innerHTML = '';
-    });
-
-    function formatDate(d) {
-      return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
-    function gbp(n) { return parseFloat(n).toFixed(2); }
-
-    // Calculation handler
-    var calcBtn = document.getElementById('smpCalcButton');
-    calcBtn && calcBtn.addEventListener('click', function () {
-      try {
-        var dueDateVal = document.getElementById('dueDate').value;
-        var empStartVal = document.getElementById('employmentStart').value;
-        var freq = (document.getElementById('payFrequency') && document.getElementById('payFrequency').value) || '';
-
-        if (!dueDateVal || !empStartVal || !freq) {
-          alert('Please fill due date, employment start date and select pay frequency.');
-          return;
-        }
-
-        var q = qualifyingWeekForDueDate(new Date(dueDateVal));
-        var qStart = q.qStart, qEnd = q.qEnd;
-
-        // gather entries depending on frequency
-        var entries = [];
-        if (freq === 'weekly') {
-          for (var i=1;i<=8;i++){
-            var el = document.getElementById('w'+i);
-            if (el && el.value !== '') entries.push(parseFloat(el.value));
-          }
-        } else if (freq === 'fortnightly') {
-          for (var i=1;i<=4;i++){
-            var el = document.getElementById('fn'+i);
-            if (el && el.value !== '') entries.push(parseFloat(el.value));
-          }
-        } else if (freq === '4-weekly') {
-          for (var i=1;i<=2;i++){
-            var el = document.getElementById('four'+i);
-            if (el && el.value !== '') entries.push(parseFloat(el.value));
-          }
-        } else if (freq === 'monthly') {
-          for (var i=1;i<=2;i++){
-            var el = document.getElementById('m'+i);
-            if (el && el.value !== '') entries.push(parseFloat(el.value));
-          }
-        }
-
-        var required = REQUIRED_ENTRIES[freq] || 2;
-        if (entries.length < required) {
-          alert('Please enter at least ' + required + ' pay period entries for accurate calculation for ' + freq + ' pay. You entered ' + entries.length + '.');
-          return;
-        }
-
-        // compute AWE
-        var aweObj = computeAWE(entries, freq);
-        var avgWeekly = aweObj.avgWeekly;
-        var earnPassed = avgWeekly >= SMP_LEL;
-
-        // continuous employment: employee must have started on or before (qualifyingWeekEnd - 26 weeks)
-        var empStart = startOfDayUTC(new Date(empStartVal));
-        var requiredStartDate = startOfDayUTC(new Date(qEnd.getTime() - 26 * 7 * 24 * 60 * 60 * 1000));
-        var empPassed = empStart <= requiredStartDate;
-
-        // SMP calculation
-        var rate90 = avgWeekly * 0.90;
-        var first6Rate = rate90; // no cap for first 6 weeks (90% of AWE)
-        var remainingRate = Math.min(SMP_STANDARD_RATE, rate90);
-        var totalFirst6 = first6Rate * FIRST_6_WEEKS;
-        var totalRemaining = remainingRate * REMAINING_WEEKS;
-        var totalSMP = totalFirst6 + totalRemaining;
-
-        var eligible = empPassed && earnPassed;
-
-        // Build output HTML
-        var html = '<div class="card ' + (eligible ? 'pass' : 'fail') + '">';
-        html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:28px">' + (eligible ? '✅' : '❌') + '</div>';
-        html += '<div><strong style="font-size:16px">' + (eligible ? 'Eligible for SMP' : 'Not eligible for SMP') + '</strong><div class="small">Based on the information you provided</div></div></div>';
-
-        html += '<div style="margin-bottom:12px"><strong>Due Date:</strong> ' + formatDate(dueDateVal) + '<br>';
-        html += '<strong>Qualifying week:</strong> ' + formatDate(qStart) + ' to ' + formatDate(qEnd) + '</div>';
-
-        html += '<div style="margin:10px 0;font-weight:600">Eligibility checks</div>';
-
-        html += '<div class="card ' + (empPassed ? 'pass' : 'fail') + '">';
-        html += '<div style="display:flex;justify-content:space-between;align-items:center"><div><div class="small" style="font-weight:600">Continuous employment</div>';
-        html += '<div class="small">Employment must have started on or before ' + formatDate(requiredStartDate) + '</div></div>';
-        html += '<div style="font-weight:700">' + (empPassed ? 'PASS' : 'FAIL') + '</div></div></div>';
-
-        html += '<div class="card ' + (earnPassed ? 'pass' : 'fail') + '">';
-        html += '<div style="display:flex;justify-content:space-between;align-items:center"><div><div class="small" style="font-weight:600">Average weekly earnings (minimum £' + SMP_LEL.toFixed(2) + ')</div>';
-        html += '<div class="small">Average weekly earnings: £' + gbp(avgWeekly) + ' (based on ' + aweObj.usedPeriods + ' pay period(s))</div></div>';
-        html += '<div style="font-weight:700">' + (earnPassed ? 'PASS' : 'FAIL') + '</div></div></div>';
-
-        if (eligible) {
-          html += '<div class="card" style="background:linear-gradient(135deg,#f9fbff,#fff)">';
-          html += '<div style="font-weight:700;margin-bottom:8px">💷 SMP payment breakdown</div>';
-          html += '<div class="pay-row"><div><div class="small">Weeks 1-' + FIRST_6_WEEKS + ' (90% of AWE)</div></div><div>£' + gbp(first6Rate) + '/week<br><span class="small">Total £' + gbp(totalFirst6) + '</span></div></div>';
-          html += '<div class="pay-row"><div><div class="small">Weeks ' + (FIRST_6_WEEKS+1) + '-' + TOTAL_SMP_WEEKS + ' (lower of £' + SMP_STANDARD_RATE.toFixed(2) + ' or 90% of AWE)</div></div><div>£' + gbp(remainingRate) + '/week<br><span class="small">Total £' + gbp(totalRemaining) + '</span></div></div>';
-          html += '<div class="total" style="margin-top:10px">Estimated total SMP (39 weeks): £' + gbp(totalSMP) + '</div>';
-          html += '<div class="small" style="margin-top:10px">Note: SMP is subject to tax & National Insurance. Employer may include contractual pay — this is the statutory entitlement calculation.</div>';
-          html += '</div>';
-        } else {
-          html += '<div class="card"><div class="small">You may qualify for <strong>Maternity Allowance</strong> if you don’t meet SMP tests — see GOV.UK for rules.</div></div>';
-        }
-
-        html += '</div>'; // outer card end
-
-        resultsEl.innerHTML = html;
-        resultsEl.style.display = 'block';
-        resultsEl.scrollIntoView({ behavior: 'smooth' });
-
-      } catch (err) {
-        console.error(err);
-        alert('Calculation error. Please check inputs.');
-      }
-    });
-  })();
-  </script>
+})();
+    </script>
 </body>
 </html>
